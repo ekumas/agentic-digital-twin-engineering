@@ -178,7 +178,36 @@ def render(twin: TwinRepresentation) -> str:
             s += f" R={rg.r} X={rg.x}"
         L.append(s)
 
-    L.append(f"Set voltagebases=[{src.nominal_kv}, 12.47, 0.48]")
+    # Build the voltage-base set from every kV level actually present in the
+    # model, rather than a fixed list. Missing bases (notably the 0.12/0.24 kV
+    # split-phase service secondaries) cause OpenDSS to snap LV buses to the
+    # nearest listed base — e.g. mis-assigning 120 V nodes a 0.277 kV base
+    # (480/sqrt3) — which corrupts their per-unit voltages while leaving the
+    # actual volts correct. Collecting the real bases fixes this at the source.
+    bases = set()
+    if src.nominal_kv:
+        bases.add(round(src.nominal_kv, 5))
+    for tr in twin.transformers.values():
+        if getattr(tr, "hv_kv", None):
+            bases.add(round(tr.hv_kv, 5))
+        if getattr(tr, "lv_kv", None):
+            bases.add(round(tr.lv_kv, 5))
+        # split-phase service transformers expose a line-to-line LV kv; the
+        # line-to-neutral base (kv/2 for centre-tapped 240/120) must also be
+        # present so 120 V nodes resolve correctly
+        lv = getattr(tr, "lv_kv", None)
+        if lv and lv < 0.5:
+            bases.add(round(lv / 2.0, 5))
+    for nd in twin.nodes.values():
+        bv = getattr(nd, "base_voltage_kv", None)
+        if bv:
+            bases.add(round(bv, 5))
+    if not bases:
+        bases = {src.nominal_kv or 12.47, 12.47, 0.48}
+    base_list = ", ".join(f"{b:g}" for b in sorted(bases))
+    L.append(f"Set voltagebases=[{base_list}]")
     L.append("Calcvoltagebases")
-    L.append("Set mode=snap")
+    L.append("Set mode=daily")
+    L.append("Set number=1")
+    L.append("Set stepsize=1h")
     return "\n".join(L)

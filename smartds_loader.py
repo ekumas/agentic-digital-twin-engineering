@@ -283,7 +283,8 @@ def load_feeder(master_dss_path: str, name: str = "smartds_feeder") -> tuple:
         nm = dss.Loads.Name()
         dss.Circuit.SetActiveElement(f"Load.{nm}")
         bus, conn = _split_bus(dss.CktElement.BusNames()[0])
-        shape = dss.Loads.Daily() or None
+        shape = (dss.Loads.Daily() or dss.Loads.Yearly()
+                 or dss.Loads.Duty() or None)
         t.add(EnergyConsumer(nm, bus, dss.Loads.kW(), dss.Loads.kvar(),
                              shape if shape and shape.lower() != "" else None,
                              phases=_phases_from_conn(conn, dss.Loads.Phases()),

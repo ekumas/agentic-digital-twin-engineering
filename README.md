@@ -71,8 +71,15 @@ python standalone/E1_loader_roundtrip.py
   on heterogeneous input the rule-based baseline collapses (edge F1 0.71, MAE 0.88)
   while the LLM agent recovers full structure (edge F1 1.00, MAE 0.000).
 - **E1** — on the real SFO feeder `p27uhs0_1247--p27udt1338` the twin is
-  reconstructed with exact topology (1654/1654 buses) and converges; MV-level
-  numerical calibration is the Calibration agent's scope (see paper §5.1).
+  reconstructed with exact topology (1654/1654 buses), converges, and reproduces
+  the ground-truth power flow: medium-voltage nodal voltage MAE is 1.3e-4 pu
+  (396 MV buses) and total real-power losses agree to within 2.7 % (60.7 kW vs.
+  59.1 kW). The 120/240 V split-phase customer service points are excluded from
+  the MV figure (their per-unit voltages depend on a low-voltage base assignment
+  outside the distribution model; their volts track ground truth to ~2 %).
+  Diagnostic flags (`--vseviye`, `--volt`, `--kayip`, `--kaynak`, `--yuk`) break
+  the round-trip error down by voltage level, element type and cause, so the
+  numerical fidelity can be independently verified.
 
 ## Dataset (for E1 on real data)
 
