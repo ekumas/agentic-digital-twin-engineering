@@ -1,7 +1,0 @@
-# Agentic Digital Twin Engineering — dependencies
-# Core: the OpenDSS proof-of-concept realisation backend.
-OpenDSSDirect.py>=0.8
-
-# The LLM semantic-inference agent (E2) uses the Python standard library
-# (urllib) to call the Anthropic or OpenAI HTTP API — no extra SDK required.
-# Provide a key at run time via ANTHROPIC_API_KEY or OPENAI_API_KEY.
