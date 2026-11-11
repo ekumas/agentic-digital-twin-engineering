@@ -14,9 +14,10 @@ import opendssdirect as dss
 from backends.opendss_adapter import render
 
 
-def run_powerflow(twin, label="twin"):
-    """Render the twin to the PoC backend and solve. Returns bus voltages (pu)."""
-    deck = render(twin)
+def run_powerflow(twin, label="twin", mode="snap"):
+    """Render the twin to the PoC backend and solve. Returns bus voltages (pu).
+    mode is passed to the adapter ("snap" or "daily")."""
+    deck = render(twin, mode=mode)
     tmpdir = tempfile.mkdtemp(prefix=f"adte_{label}_")
     path = os.path.join(tmpdir, "Master.dss")
     with open(path, "w") as f:
