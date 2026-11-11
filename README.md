@@ -5,7 +5,7 @@ Continuous Synchronisation of Power Distribution Digital Twins: A
 Standards-Grounded Multi-Agent Framework."*
 
 **License:** MIT · **Language:** Python 3.10+ · **Backend:** OpenDSS (proof-of-concept)
-· **Archived release:** https://doi.org/10.5281/zenodo.21708498
+· **Archived release:** [https://doi.org/10.5281/zenodo.21708498]
 
 > **Citation.** If you use this code, please cite the paper. A BibTeX entry will
 > be added here on publication.
