@@ -34,8 +34,14 @@ def _tri(vals):
     return "(" + " | ".join(out) + ")"
 
 
-def render(twin: TwinRepresentation) -> str:
-    """Return a runnable OpenDSS deck (Master.dss content)."""
+def render(twin: TwinRepresentation, mode: str = "snap") -> str:
+    """Return a runnable OpenDSS deck (Master.dss content).
+
+    mode="snap"  : snapshot solve at nominal loading (reference-feeder
+                   experiments E-CRL, ablation, E2, E3).
+    mode="daily" : first step of a daily time-series solve, with load shapes
+                   applied (SMART-DS round trip, E1).
+    """
     L = []
     L.append(f"Clear")
     L.append(f"New Circuit.{twin.name}")
@@ -207,7 +213,11 @@ def render(twin: TwinRepresentation) -> str:
     base_list = ", ".join(f"{b:g}" for b in sorted(bases))
     L.append(f"Set voltagebases=[{base_list}]")
     L.append("Calcvoltagebases")
-    L.append("Set mode=daily")
-    L.append("Set number=1")
-    L.append("Set stepsize=1h")
+    if mode == "daily":
+        L.append("Set mode=daily")
+        L.append("Set number=1")
+        L.append("Set stepsize=1h")
+    else:
+        L.append("Set mode=snap")
     return "\n".join(L)
+
