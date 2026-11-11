@@ -148,7 +148,7 @@ def main(master_path=None):
 
     # 2) lift into the CIM twin, then render + solve again
     twin, report = load_feeder(master, name="rt_feeder")
-    est = run_powerflow(twin, "roundtrip")
+    est = run_powerflow(twin, "roundtrip", mode="daily")
 
     vf = voltage_fidelity(ref, est)
     vf_mv = voltage_fidelity_mv(ref, est)
